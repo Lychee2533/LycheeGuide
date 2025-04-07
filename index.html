@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI工具导航</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f5f7fa;
+            color: #333;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px 0;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto 30px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 1.1em;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            outline: none;
+            transition: all 0.3s ease;
+            background-color: white;
+        }
+
+        .search-input:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+
+        .category-tag {
+            display: inline-block;
+            padding: 6px 12px;
+            background-color: #6366f1;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+        }
+        
+        .category {
+            margin-bottom: 30px;
+        }
+        
+        .category-title {
+            font-size: 1.5em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .sites-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 15px;
+        }
+        
+        .site-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 15px;
+            transition: all 0.3s ease;
+            border: 1px solid #eee;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            height: 80px;
+        }
+        
+        .site-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .site-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            margin-right: 12px;
+            object-fit: contain;
+        }
+        
+        .site-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .site-name {
+            font-size: 1em;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .site-desc {
+            font-size: 0.85em;
+            color: #666;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+        }
+
+        .highlight {
+            background-color: #fef9c3;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .sites-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 12px;
+            }
+            
+            .site-card {
+                padding: 12px;
+                height: 70px;
+            }
+            
+            .site-icon {
+                width: 36px;
+                height: 36px;
+            }
+            
+            .site-name {
+                font-size: 0.95em;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .category-title {
+                font-size: 1.2em;
+            }
+
+            .search-input {
+                padding: 10px 16px;
+                font-size: 1em;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .sites-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .site-card {
+                padding: 10px;
+                height: 65px;
+            }
+            
+            .site-icon {
+                width: 32px;
+                height: 32px;
+            }
+            
+            .site-name {
+                font-size: 0.9em;
+            }
+
+            .site-desc {
+                font-size: 0.8em;
+            }
+
+            .search-input {
+                padding: 8px 14px;
+                font-size: 0.95em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI工具导航</h1>
+        </header>
+
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="搜索AI工具..." id="searchInput">
+            <svg class="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM19 19l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+
+        <div class="category">
+            <div class="category-tag">对话类AI</div>
+            <div class="sites-grid">
+                <a href="https://monica.im/home/chat/Monica/monica" class="site-card" target="_blank">
+                    <img src="icons/monica.png" alt="Monica" class="site-icon">
+                    <div class="site-info">
+                        <div class="site-name">Monica</div>
+                        <div class="site-desc">全能AI智能助手</div>
+                    </div>
+                </a>
+                <a href="https://chat.openai.com/chat" class="site-card" target="_blank">
+                    <img src="icons/chatgpt.png" alt="ChatGPT" class="site-icon">
+                    <div class="site-info">
+                        <div class="site-name">ChatGPT</div>
+                        <div class="site-desc">OpenAI开发的对话AI</div>
+                    </div>
+                </a>
+                <a href="https://chat.deepseek.com/" class="site-card" target="_blank">
+                    <img src="icons/deepseek.png" alt="DeepSeek" class="site-icon">
+                    <div class="site-info">
+                        <div class="site-name">DeepSeek</div>
+                        <div class="site-desc">专注于深度学习的AI助手</div>
+                    </div>
+                </a>
+                <a href="https://yuanbao.tencent.com/" class="site-card" target="_blank">
+                    <img src="icons/yuanbao.png" alt="腾讯元宝" class="site-icon">
+                    <div class="site-info">
+                        <div class="site-name">腾讯元宝</div>
+                        <div class="site-desc">腾讯出品的AI助手</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="category">
+            <div class="category-tag">搜索类AI</div>
+            <div class="sites-grid">
+                <a href="https://metaso.cn/?s=bdpc&" class="site-card" target="_blank">
+                    <img src="icons/metaso.png" alt="秘塔AI搜索" class="site-icon">
+                    <div class="site-info">
+                        <div class="site-name">秘塔AI搜索</div>
+                        <div class="site-desc">智能搜索引擎</div>
+                    </div>
+                </a>
+                <a href="https://www.n.cn/?fromsou=1" class="site-card" target="_blank">
+                    <img src="icons/nano.png" alt="纳米AI搜索" class="site-icon">
+                    <div class="site-info">
+                        <div class="site-name">纳米AI搜索</div>
+                        <div class="site-desc">智能搜索与问答</div>
+                    </div>
+                </a>
+                <a href="https://www.perplexity.ai/" class="site-card" target="_blank">
+                    <img src="icons/perplexity.png" alt="Perplexity" class="site-icon">
+                    <div class="site-info">
+                        <div class="site-name">Perplexity</div>
+                        <div class="site-desc">AI驱动的智能搜索</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="category">
+            <div class="category-tag">绘图类AI</div>
+            <div class="sites-grid">
+                <a href="https://jimeng.jianying.com/ai-tool/home" class="site-card" target="_blank">
+                    <img src="icons/jimeng.png" alt="即梦AI" class="site-icon">
+                    <div class="site-info">
+                        <div class="site-name">即梦AI</div>
+                        <div class="site-desc">AI图像生成工具</div>
+                    </div>
+                </a>
+                <a href="https://www.xingliu.art/" class="site-card" target="_blank">
+                    <img src="icons/xingliu.png" alt="星流AI" class="site-icon">
+                    <div class="site-info">
+                        <div class="site-name">星流AI</div>
+                        <div class="site-desc">AI艺术创作平台</div>
+                    </div>
+                </a>
+                <a href="https://dreamina.capcut.com/" class="site-card" target="_blank">
+                    <img src="icons/dreamina.png" alt="Dreamina" class="site-icon">
+                    <div class="site-info">
+                        <div class="site-name">Dreamina</div>
+                        <div class="site-desc">AI绘画创作工具</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="category">
+            <div class="category-tag">视频类AI</div>
+            <div class="sites-grid">
+                <a href="https://klingai.kuaishou.com/" class="site-card" target="_blank">
+                    <img src="icons/kling.png" alt="可灵AI" class="site-icon">
+                    <div class="site-info">
+                        <div class="site-name">可灵AI</div>
+                        <div class="site-desc">AI视频创作工具</div>
+                    </div>
+                </a>
+                <a href="https://hailuoai.com/video" class="site-card" target="_blank">
+                    <img src="icons/hailuo.png" alt="海螺视频" class="site-icon">
+                    <div class="site-info">
+                        <div class="site-name">海螺视频</div>
+                        <div class="site-desc">AI视频生成平台</div>
+                    </div>
+                </a>
+                <a href="https://hailuoai.video/" class="site-card" target="_blank">
+                    <img src="icons/hailuo-video.png" alt="Hailuo AI" class="site-icon">
+                    <div class="site-info">
+                        <div class="site-name">Hailuo AI</div>
+                        <div class="site-desc">智能视频创作</div>
+                    </div>
+                </a>
+                <a href="https://www.vidu.cn/" class="site-card" target="_blank">
+                    <img src="icons/vidu.png" alt="Vidu AI" class="site-icon">
+                    <div class="site-info">
+                        <div class="site-name">Vidu AI</div>
+                        <div class="site-desc">AI视频处理工具</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="category">
+            <div class="category-tag">音乐类AI</div>
+            <div class="sites-grid">
+                <a href="https://suno.com/home" class="site-card" target="_blank">
+                    <img src="icons/suno.png" alt="Suno" class="site-icon">
+                    <div class="site-info">
+                        <div class="site-name">Suno</div>
+                        <div class="site-desc">AI音乐创作平台</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="category">
+            <div class="category-tag">智能体</div>
+            <div class="sites-grid">
+                <a href="https://manus.im/" class="site-card" target="_blank">
+                    <img src="icons/manus.png" alt="Manus" class="site-icon">
+                    <div class="site-info">
+                        <div class="site-name">Manus</div>
+                        <div class="site-desc">智能AI助手</div>
+                    </div>
+                </a>
+                <a href="https://flowith.io/" class="site-card" target="_blank">
+                    <img src="icons/flowith.png" alt="flowith" class="site-icon">
+                    <div class="site-info">
+                        <div class="site-name">flowith</div>
+                        <div class="site-desc">AI工作流助手</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="category">
+            <div class="category-tag">声音类AI</div>
+            <div class="sites-grid">
+                <a href="https://hailuoai.com/audio" class="site-card" target="_blank">
+                    <img src="icons/hailuo-audio.png" alt="海螺语音" class="site-icon">
+                    <div class="site-info">
+                        <div class="site-name">海螺语音</div>
+                        <div class="site-desc">AI语音合成工具</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="category">
+            <div class="category-tag">资源类</div>
+            <div class="sites-grid">
+                <a href="https://geticon.online/" class="site-card" target="_blank">
+                    <img src="icons/geticon.png" alt="Icon Fetcher" class="site-icon">
+                    <div class="site-info">
+                        <div class="site-name">Icon Fetcher</div>
+                        <div class="site-desc">网站图标获取工具</div>
+                    </div>
+                </a>
+                <a href="https://pixabay.com/" class="site-card" target="_blank">
+                    <img src="icons/pixabay.png" alt="Pixabay" class="site-icon">
+                    <div class="site-info">
+                        <div class="site-name">Pixabay</div>
+                        <div class="site-desc">免费高质量图片素材库</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const siteCards = document.querySelectorAll('.site-card');
+            const categories = document.querySelectorAll('.category');
+
+            searchInput.addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase().trim();
+
+                categories.forEach(category => {
+                    let hasVisibleCards = false;
+                    const cards = category.querySelectorAll('.site-card');
+
+                    cards.forEach(card => {
+                        const name = card.querySelector('.site-name').textContent.toLowerCase();
+                        const desc = card.querySelector('.site-desc').textContent.toLowerCase();
+                        const isMatch = name.includes(searchTerm) || desc.includes(searchTerm);
+
+                        card.style.display = isMatch ? '' : 'none';
+                        if (isMatch) hasVisibleCards = true;
+
+                        // 重置高亮
+                        card.querySelector('.site-name').innerHTML = card.querySelector('.site-name').textContent;
+                        card.querySelector('.site-desc').innerHTML = card.querySelector('.site-desc').textContent;
+
+                        // 添加高亮
+                        if (searchTerm && isMatch) {
+                            const nameText = card.querySelector('.site-name').textContent;
+                            const descText = card.querySelector('.site-desc').textContent;
+                            
+                            card.querySelector('.site-name').innerHTML = highlightText(nameText, searchTerm);
+                            card.querySelector('.site-desc').innerHTML = highlightText(descText, searchTerm);
+                        }
+                    });
+
+                    category.style.display = hasVisibleCards ? '' : 'none';
+                });
+            });
+
+            function highlightText(text, searchTerm) {
+                const regex = new RegExp(`(${searchTerm})`, 'gi');
+                return text.replace(regex, '<span class="highlight">$1</span>');
+            }
+        });
+    </script>
+</body>
+</html> 
